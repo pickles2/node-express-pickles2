@@ -1,0 +1,22 @@
+{
+  "name": "express-pickles2",
+  "version": "2.0.0-alpha.1",
+  "description": "Pickles 2 Server Emulator for Express.",
+  "main": "libs/px2agent.js",
+  "repository": {
+    "url": "https://github.com/pickles2/node-express-pickles2.git"
+  },
+  "scripts": {
+    "test": "mocha --ui tdd ./tests/"
+  },
+  "author": "Tomoya Koyanagi",
+  "license": "MIT",
+  "devDependencies": {
+    "express": "^4.13.4",
+    "mocha": "^2.4.5"
+  },
+  "dependencies": {
+    "node-php-bin": "^0.2.1",
+    "px2agent": "^2.0.4"
+  }
+}
