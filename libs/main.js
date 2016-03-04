@@ -8,7 +8,7 @@ module.exports = function(execute_php, options){
 
 	return function(req, res, next){
 		// console.log(req);
-		console.log(req.originalUrl);
+		// console.log(req.originalUrl);
 
 		px2proj.get_config(function(value){
 			// console.log(value);
@@ -24,12 +24,24 @@ module.exports = function(execute_php, options){
 					var bin = data;
 					try {
 						data = JSON.parse(data);
+						// console.log(data);
+						res.status(data.status);
 						bin = new Buffer(data.body_base64, 'base64').toString();
 					}catch(e){
 					}
-					res.send(bin);
+					var ext = 'html';
+					// console.log(req._parsedUrl.pathname);
+					if( req._parsedUrl.pathname.match(new RegExp('^.*\\.([^\\.\\/]+?)$')) ){
+						ext = RegExp.$1;
+					}else if( req._parsedUrl.pathname.match(new RegExp('^.*\\/$')) ){
+						ext = 'html';
+					}
+					console.log(ext);
+					res.type(ext);
+					res.send(bin).end();
 				}
 			});
 		});
 	};
+
 }

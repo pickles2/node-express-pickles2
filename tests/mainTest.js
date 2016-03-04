@@ -20,7 +20,7 @@ describe('mainTest', function() {
 				setTimeout(function(){
 					assert.equal(1, 1);
 					done();
-				}, 5000);
+				}, 10000);
 			});
 		});
 
