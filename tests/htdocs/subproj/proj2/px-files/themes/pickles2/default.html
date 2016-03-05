@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title><?= htmlspecialchars($px->site()->get_current_page_info('title_full')); ?></title>
+<?php include(__DIR__.'/inc/headsection.inc'); ?>
+<?= $px->bowl()->pull('head') ?>
+	</head>
+	<body>
+		<header class="theme_header" id="page_top">
+			<p class="theme_si"><a href="<?= htmlspecialchars($px->href('')); ?>"><?= htmlspecialchars( $px->conf()->name ) ?></a></p>
+		</header>
+		<div class="theme_mainblock">
+			<h1><?= preg_replace('/\r\n|\r|\n/s', '<br />', htmlspecialchars($px->site()->get_current_page_info( 'title_h1' )) ); ?></h1>
+			<div class="contents" <?= htmlspecialchars($theme->get_attr_bowl_name_by())?>="main">
+<?= $px->bowl()->pull() ?>
+			</div>
+		</div><!-- /.theme_mainblock -->
+<?= $px->bowl()->pull('foot') ?>
+	</body>
+</html>

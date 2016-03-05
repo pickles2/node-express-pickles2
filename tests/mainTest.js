@@ -5,24 +5,86 @@ var http = require('http');
 
 describe('mainTest', function() {
 
-	it("mainTest 1", function(done) {
-		this.timeout(60*1000);
+	it("server UP", function(done) {
+		this.timeout(10*1000);
 
 		var app = express();
+		app.get('/subproj/proj2/*', expressPickles2(__dirname+'/htdocs/subproj/proj2/.px_execute.php') );
 		app.get('/*', expressPickles2(__dirname+'/htdocs/.px_execute.php') );
 		app.listen(3000);
 
-		get('/index.html', function(bin){
-			console.log(bin);
+		assert.equal(1, 1);
+		done();
 
-			get('/index.html?PX=clearcache', function(bin){
-				console.log(bin);
-				setTimeout(function(){
-					assert.equal(1, 1);
-					done();
-				}, 10000);
+	});
+
+	it("/index.html", function(done) {
+		this.timeout(60*1000);
+
+		get('/index.html', function(bin){
+			// console.log(bin);
+			assert.equal(1, 1);
+			done();
+		});
+
+	});
+
+	it("/sample_pages/index.html", function(done) {
+		this.timeout(60*1000);
+
+		get('/sample_pages/index.html', function(bin){
+			// console.log(bin);
+			assert.equal(1, 1);
+			done();
+		});
+
+	});
+
+	it("index.html を省略する", function(done) {
+		this.timeout(60*1000);
+
+		get('/sample_pages/', function(bin1){
+			get('/sample_pages/index.html', function(bin2){
+				// console.log(bin1, bin2);
+				assert.equal(bin1, bin2);
+				done();
 			});
 		});
+
+	});
+
+});
+
+describe('subproj/proj2', function() {
+
+	it("/subproj/proj2/index.html", function(done) {
+		this.timeout(60*1000);
+
+		get('/subproj/proj2/index.html', function(bin){
+			// console.log(bin);
+			assert.equal(1, 1);
+			done();
+		});
+
+	});
+
+});
+
+describe('(後片付け)', function() {
+
+	it("clearcache", function(done) {
+		this.timeout(60*1000);
+
+		setTimeout(function(){
+			get('/index.html?PX=clearcache', function(bin){
+				// console.log(bin);
+				get('/subproj/proj2/index.html?PX=clearcache', function(bin){
+					// console.log(bin);
+					assert.equal(1, 1);
+					done();
+				});
+			});
+		}, 2*1000);
 
 	});
 
@@ -52,4 +114,5 @@ function get(url, callback){
 	req.on('error', function (err) {
 		console.log('Error: ', err); return;
 	});
+	return;
 }

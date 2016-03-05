@@ -1,0 +1,36 @@
+@charset 'UTF-8';
+
+html, body{
+	font-size: medium;
+	font-family: Meiryo, "Hiragino Kaku Gothic ProN", Verdana, sans-serif;
+}
+.current{
+	font-weight: bold;
+}
+.contents{
+<?php include(__DIR__.'/normalize/normalize-3.0.1.css'); ?>
+
+	/* ライブラリ同士の衝突吸収 */
+	p, ul, ol, dl{
+		margin: 1em 0;
+	}
+	dl dd {
+		margin-left: 2em;
+	}
+	p, li, dt, dd{
+		line-height: 1.6;
+	}
+	.btn{
+		background-color:#428bca;
+	}
+	pre code{
+		border:none;
+		padding:0;
+		margin:0;
+		display:inline;
+	}
+
+<?php
+print (new \tomk79\pickles2\px2dthelper\main($px))->document_modules()->build_css();
+?>
+}
