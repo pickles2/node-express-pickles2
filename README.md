@@ -1,6 +1,6 @@
 # node-express-pickles2
 
-Pickles 2 Server Emulator for Express.
+[Pickles 2](http://pickles2.pxt.jp/) Server Emulator for Express.
 
 ## Install
 
