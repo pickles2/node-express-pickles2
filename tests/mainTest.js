@@ -2,6 +2,7 @@ var assert = require('assert');
 var express = require('express');
 var expressPickles2 = require('../libs/main.js');
 var http = require('http');
+var cheerio = require('cheerio');
 
 describe('mainTest', function() {
 
@@ -23,7 +24,11 @@ describe('mainTest', function() {
 
 		get('/index.html', function(bin){
 			// console.log(bin);
-			assert.equal(1, 1);
+
+			var $ = cheerio.load(bin, {decodeEntities: false});
+			var $testElm = $('p[data-test-meta-data]').eq(0);
+			assert.equal($testElm.attr('data-test-meta-data'), '/index.html');
+
 			done();
 		});
 
@@ -34,7 +39,11 @@ describe('mainTest', function() {
 
 		get('/sample_pages/index.html', function(bin){
 			// console.log(bin);
-			assert.equal(1, 1);
+
+			var $ = cheerio.load(bin, {decodeEntities: false});
+			var $testElm = $('p[data-test-meta-data]').eq(0);
+			assert.equal($testElm.attr('data-test-meta-data'), '/sample_pages/index.html');
+
 			done();
 		});
 
@@ -62,7 +71,11 @@ describe('subproj/proj2', function() {
 
 		get('/subproj/proj2/index.html', function(bin){
 			// console.log(bin);
-			assert.equal(1, 1);
+
+			var $ = cheerio.load(bin, {decodeEntities: false});
+			var $testElm = $('p[data-test-meta-data]').eq(0);
+			assert.equal($testElm.attr('data-test-meta-data'), '/subproj/proj2/index.html');
+
 			done();
 		});
 

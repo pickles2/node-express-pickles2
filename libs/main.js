@@ -26,6 +26,7 @@ module.exports = function(execute_php, options){
 			if( request_path.lastIndexOf( '/' ) === request_path.length-1 ){
 				request_path += 'index.html';
 			}
+			// console.log(request_path);
 
 			var mimeType = mime.lookup( request_path );
 			// console.log(mimeType);
@@ -54,7 +55,9 @@ module.exports = function(execute_php, options){
 					break;
 			}
 
-			px2proj.query(request_path + req._parsedUrl.search, {
+			var query = request_path + (req._parsedUrl.search||'');
+			// console.log(query);
+			px2proj.query(query, {
 				"output": "json",
 				"userAgent": "Mozilla/5.0",
 				"success": function(data){
