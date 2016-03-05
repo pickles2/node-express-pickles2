@@ -4,6 +4,8 @@ var expressPickles2 = require('../libs/main.js');
 var http = require('http');
 var cheerio = require('cheerio');
 
+var envProcessorString = '<!-- processor -->';
+
 describe('mainTest', function() {
 
 	it("server UP", function(done) {
@@ -11,7 +13,23 @@ describe('mainTest', function() {
 
 		var app = express();
 		app.get('/subproj/proj2/*', expressPickles2(__dirname+'/htdocs/subproj/proj2/.px_execute.php') );
-		app.get('/*', expressPickles2(__dirname+'/htdocs/.px_execute.php') );
+		app.get('/*', expressPickles2(
+			__dirname+'/htdocs/.px_execute.php',
+			{
+				'processor': function(bin, ext, callback){
+					// console.log(bin);
+					// console.log(ext);
+					switch(ext){
+						case 'html':
+						case 'htm':
+							bin += envProcessorString;
+							break;
+					}
+					callback(bin);
+					return;
+				}
+			}
+		) );
 		app.listen(3000);
 
 		assert.equal(1, 1);
@@ -43,6 +61,32 @@ describe('mainTest', function() {
 			var $ = cheerio.load(bin, {decodeEntities: false});
 			var $testElm = $('p[data-test-meta-data]').eq(0);
 			assert.equal($testElm.attr('data-test-meta-data'), '/sample_pages/index.html');
+
+			done();
+		});
+
+	});
+
+	it("/common/styles/contents.css", function(done) {
+		this.timeout(60*1000);
+
+		get('/common/styles/contents.css', function(bin){
+			// console.log(bin);
+
+			assert.notEqual( bin.lastIndexOf(envProcessorString), bin.length - envProcessorString.length );
+
+			done();
+		});
+
+	});
+
+	it("processor", function(done) {
+		this.timeout(60*1000);
+
+		get('/sample_pages/index.html', function(bin){
+			// console.log(bin);
+
+			assert.equal( bin.lastIndexOf(envProcessorString), bin.length - envProcessorString.length );
 
 			done();
 		});

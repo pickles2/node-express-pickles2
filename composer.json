@@ -2,6 +2,7 @@
     "require": {
         "php": ">=5.4.0" ,
         "pickles2/px-fw-2.x": "2.*",
-        "pickles2/px2-multitheme": "2.*"
+        "pickles2/px2-multitheme": "2.*",
+        "pickles2/px2-px2dthelper": "dev-master"
     }
 }

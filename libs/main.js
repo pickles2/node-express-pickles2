@@ -10,6 +10,12 @@ module.exports = function(execute_php, options){
 	// console.log(execute_php);
 	// console.log(path.dirname(execute_php));
 
+	options = options || {};
+	options.processor = options.processor || function(bin, ext, callback){
+		callback(bin);
+		return;
+	}
+
 	return function(req, res, next){
 		// console.log(req);
 		// console.log(req.originalUrl);
@@ -76,13 +82,15 @@ module.exports = function(execute_php, options){
 					}
 
 					// console.log(mimeType);
-					res
-						.set('Content-Type', mimeType)
-						.status(status)
-						.type(ext)
-						.send(bin)
-						.end()
-					;
+					options.processor(bin, ext, function(bin){
+						res
+							.set('Content-Type', mimeType)
+							.status(status)
+							.type(ext)
+							.send(bin)
+							.end()
+						;
+					});
 					return;
 				}
 			});
