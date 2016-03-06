@@ -2,7 +2,7 @@
  * express-pickles2.js
  */
 module.exports = function(execute_php, options){
-	var px2proj = require('px2agent').createProject(execute_php);
+	var px2agent = require('px2agent');
 	var mime = require('mime');
 	var path = require('path');
 	var fs = require('fs');
@@ -33,6 +33,9 @@ module.exports = function(execute_php, options){
 				// options.liveConfig = new_options.liveConfig || options.liveConfig; // ← liveConfig はその性格上上書きを禁止
 				options.processor = new_options.processor || options.processor;
 			}
+
+			var px2proj = px2agent.createProject(execute_php);
+
 
 			px2proj.get_config(function(pxConf){
 				// console.log(pxConf);
