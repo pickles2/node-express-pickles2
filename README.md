@@ -16,7 +16,7 @@ var express = require('express');
 var expressPickles2 = require('express-pickles2');
 
 var app = express();
-app.get('/*', expressPickles2('/path/to/.px_execute.php', {}) );
+app.use('/*', expressPickles2('/path/to/.px_execute.php', {}) );
 app.listen(3000);
 ```
 
@@ -24,7 +24,7 @@ app.listen(3000);
 ### Options
 
 ```js
-app.get(
+app.use(
     '/*',
     expressPickles2(
         '/path/to/.px_execute.php' ,

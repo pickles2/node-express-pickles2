@@ -12,8 +12,8 @@ describe('mainTest', function() {
 		this.timeout(10*1000);
 
 		var app = express();
-		app.get('/subproj/proj2/*', expressPickles2(__dirname+'/htdocs/subproj/proj2/.px_execute.php') );
-		app.get('/*', expressPickles2(
+		app.use('/subproj/proj2/*', expressPickles2(__dirname+'/htdocs/subproj/proj2/.px_execute.php') );
+		app.use('/*', expressPickles2(
 			__dirname+'/htdocs/.px_execute.php',
 			{
 				'processor': function(bin, ext, callback){
