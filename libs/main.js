@@ -64,17 +64,28 @@ module.exports = function(execute_php, options){
 					case 'htm':
 					case 'css':
 					case 'js':
-					break;
+						break;
 					default:
-					var realpathResource = path.resolve(path.dirname(execute_php), './'+req.originalUrl);
-					// console.log( realpathResource );
-					res
-					.set('Content-Type', mimeType)
-					.send( fs.readFileSync(realpathResource) )
-					.end()
-					;
-					return;
-					break;
+						var realpathResource = path.resolve(path.dirname(execute_php), './'+req.originalUrl);
+						var bin = '';
+						try {
+							bin = fs.readFileSync(realpathResource);
+							res
+								.set('Content-Type', mimeType)
+								.send( bin )
+								.end()
+							;
+						} catch (e) {
+							res
+								.set('Content-Type', 'text/html')
+								.status( 404 )
+								.send( 'Not Found' )
+								.end()
+							;
+						}
+						// console.log( realpathResource );
+						return;
+						break;
 				}
 
 				var query = request_path + (req._parsedUrl.search||'');
