@@ -1,0 +1,59 @@
+<?php
+	require_once( __DIR__.'/php/top.php' );
+	$theme_top = new pickles2\themes\pickles\theme_top($px, $theme);
+
+	//↓ $page_info にページの情報を格納しています。
+	//	 test::var_dump( $page_info ); で、変数の内容を確認できます。
+	$page_info = $px->site()->get_current_page_info();
+	$colors = $theme_top->get_color_scheme();
+	$test_results = $theme_top->setup_test();
+	$messageBoxSetting = array();
+	$messageBoxSetting['main'] = $colors['main'];
+	$messageBoxSetting['bg'] = '#fff';
+	$messageBoxSetting['radius'] = '1em';
+	if( count($test_results) ){
+		// エラーが検出された場合
+		$messageBoxSetting['main'] = '#ff0000';
+		$messageBoxSetting['bg'] = '#ffeeee';
+		$messageBoxSetting['radius'] = '0px';
+	}
+?><!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title><?= htmlspecialchars( $px->conf()->name ) ?></title>
+<?php include(__DIR__.'/inc/headsection.inc'); ?>
+<?= $px->bowl()->pull('head') ?>
+	</head>
+	<body>
+		<h1 class="theme_si"><?= htmlspecialchars( $px->conf()->name ) ?></h1>
+		<div class="theme_mainblock">
+			<div class="container">
+				<div class="contents" <?= htmlspecialchars($theme->get_attr_bowl_name_by())?>="main">
+<?= $px->bowl()->pull() ?>
+				</div>
+			</div><!-- /.container -->
+		</div><!-- /.theme_mainblock -->
+		<footer class="theme_footer">
+			<div class="container">
+				<nav class="theme_megafooter_navi">
+<?= $theme->mk_megafooter_menu() ?>
+				</nav>
+			</div>
+			<div class="container theme_footer_shouldernavi">
+<?php
+	$shoulder_menu = $px->site()->get_shoulder_menu();
+	echo( '<ul>' );
+	foreach( $shoulder_menu as $page_id ){
+		echo( '<li>'.$px->mk_link( $page_id ).'</li>' );
+	}
+	echo( '</ul>' );
+?>
+			</div>
+			<div class="container">
+				<p style="text-align:center;">Pickles 2 is made by Tomoya Koyanagi.</p>
+			</div>
+		</footer>
+	</body>
+<?= $px->bowl()->pull('foot') ?>
+</html>

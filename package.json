@@ -7,6 +7,7 @@
     "url": "https://github.com/tomk79/node-express-pickles2.git"
   },
   "scripts": {
+    "start": "node tests/server/server.js",
     "test": "mocha --ui tdd ./tests/"
   },
   "author": "Tomoya Koyanagi",
@@ -14,9 +15,11 @@
   "devDependencies": {
     "cheerio": "^0.20.0",
     "express": "^4.13.4",
+    "express-session": "^1.13.0",
     "mocha": "^2.4.5"
   },
   "dependencies": {
+    "body-parser": "^1.15.0",
     "mime": "^1.3.4",
     "node-php-bin": "*",
     "px2agent": "^2.0.4"

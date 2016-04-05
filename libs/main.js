@@ -1,14 +1,23 @@
 /**
  * express-pickles2.js
  */
-module.exports = function(execute_php, options){
+module.exports = function(execute_php, options, app){
 	var px2agent = require('px2agent');
 	var mime = require('mime');
 	var path = require('path');
 	var fs = require('fs');
+	var querystring = require('querystring')
 	// console.log(px2proj);
 	// console.log(execute_php);
 	// console.log(path.dirname(execute_php));
+
+	if(app){
+		app.use( require('body-parser')() );
+		app.use( require('express-session')({
+			secret: "pickles2",
+			cookie: {httpOnly: false}
+		}) );
+	}
 
 	options = options || {};
 	options.liveConfig = options.liveConfig || function(callback){
@@ -88,8 +97,19 @@ module.exports = function(execute_php, options){
 						break;
 				}
 
-				var query = request_path + (req._parsedUrl.search||'');
+				var params = querystring.parse( (req._parsedUrl.search||'').replace(new RegExp('^\\?'), '') );
 				// console.log(query);
+				if( params['THEME'] ){
+					req.session['THEME'] = params['THEME'];
+				}
+				if( req.session && req.session['THEME'] ){
+					params['THEME'] = req.session['THEME'];
+				}
+				req._parsedUrl.search = '?'+querystring.stringify(params);
+				// console.log(req._parsedUrl.search);
+
+				var query = request_path + (req._parsedUrl.search||'');
+
 				px2proj.query(query, {
 					"output": "json",
 					"userAgent": "Mozilla/5.0",
@@ -111,11 +131,11 @@ module.exports = function(execute_php, options){
 						// console.log(mimeType);
 						options.processor(bin, ext, function(bin){
 							res
-							.set('Content-Type', mimeType)
-							.status(status)
-							.type(ext)
-							.send(bin)
-							.end()
+								.set('Content-Type', mimeType)
+								.status(status)
+								.type(ext)
+								.send(bin)
+								.end()
 							;
 						});
 						return;

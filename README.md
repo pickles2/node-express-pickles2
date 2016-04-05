@@ -16,7 +16,7 @@ var express = require('express');
 var expressPickles2 = require('express-pickles2');
 
 var app = express();
-app.use('/*', expressPickles2('/path/to/.px_execute.php', {}) );
+app.use('/*', expressPickles2('/path/to/.px_execute.php', {}, app) );
 app.listen(3000);
 ```
 
@@ -40,7 +40,8 @@ app.use(
                 callback(bin);
                 return;
             }
-        }
+        },
+        app
     )
 );
 ```

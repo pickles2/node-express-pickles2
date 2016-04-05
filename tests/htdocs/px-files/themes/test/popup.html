@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title><?= htmlspecialchars($px->site()->get_current_page_info('title_full')); ?></title>
+<?php include(__DIR__.'/inc/headsection.inc'); ?>
+<?= $px->bowl()->pull('head') ?>
+	</head>
+	<body>
+		<header class="theme_header" id="page_top">
+			<div class="container">
+				<p class="theme_si"><?= htmlspecialchars( $px->conf()->name ); ?></p>
+			</div>
+		</header>
+		<div class="theme_mainblock">
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-12">
+						<h1><?= preg_replace('/\r\n|\r|\n/s', '<br />', htmlspecialchars($px->site()->get_current_page_info( 'title_h1' )) ); ?></h1>
+						<div class="contents" <?= htmlspecialchars($theme->get_attr_bowl_name_by())?>="main">
+<?= $px->bowl()->pull() ?>
+						</div>
+					</div>
+				</div><!-- /.row -->
+			</div><!-- /.container -->
+		</div><!-- /.theme_mainblock -->
+		<footer class="theme_footer">
+			<div class="container">
+				<p style="text-align:center;"><button onclick="window.close();return false;">close</button></p>
+				<p style="text-align:center;">Pickles 2 is made by Tomoya Koyanagi.</p>
+			</div>
+		</footer>
+<?= $px->bowl()->pull('foot') ?>
+	</body>
+</html>
