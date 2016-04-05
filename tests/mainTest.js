@@ -128,18 +128,18 @@ describe('subproj/proj2', function() {
 
 });
 
-describe('?THEME=pickles2', function() {
+describe('?THEME=test', function() {
 
-	it("/?THEME=pickles2", function(done) {
+	it("/?THEME=test", function(done) {
 		this.timeout(60*1000);
 
-		get('/?THEME=pickles2', function(bin, headers){
+		get('/?THEME=test', function(bin, headers){
 			// console.log(bin);
-			console.log(headers);
+			// console.log(headers);
 
-			// var $ = cheerio.load(bin, {decodeEntities: false});
-			// var $testElm = $('p[data-test-meta-data]').eq(0);
-			// assert.equal($testElm.attr('data-test-meta-data'), '/subproj/proj2/index.html');
+			var $ = cheerio.load(bin, {decodeEntities: false});
+			var $testElm = $('body').eq(0);
+			assert.equal($testElm.attr('class'), 'theme_test');
 
 			done();
 		});
