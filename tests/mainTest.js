@@ -28,9 +28,10 @@ describe('mainTest', function() {
 					callback(bin);
 					return;
 				}
-			}
+			},
+			app
 		) );
-		app.listen(3000);
+		app.listen(8080);
 
 		assert.equal(1, 1);
 		done();
@@ -127,6 +128,26 @@ describe('subproj/proj2', function() {
 
 });
 
+describe('?THEME=test', function() {
+
+	it("/?THEME=test", function(done) {
+		this.timeout(60*1000);
+
+		get('/?THEME=test', function(bin, headers){
+			// console.log(bin);
+			// console.log(headers);
+
+			var $ = cheerio.load(bin, {decodeEntities: false});
+			var $testElm = $('body').eq(0);
+			assert.equal($testElm.attr('class'), 'theme_test');
+
+			done();
+		});
+
+	});
+
+});
+
 describe('(後片付け)', function() {
 
 	it("clearcache", function(done) {
@@ -151,7 +172,8 @@ function get(url, callback){
 
 	// ダウンロードする
 	var bin = '';
-	var req = http.get('http://127.0.0.1:3000'+url, function (res) {
+	var req = http.get('http://127.0.0.1:8080'+url, function (res) {
+		// console.log(res.headers);
 
 		// テキストファイルの場合は、エンコード指定は重要！
 		res.setEncoding('utf8');
@@ -163,7 +185,7 @@ function get(url, callback){
 
 		// ファイルのダウンロードが終わるとendイベントが呼ばれる
 		res.on('end', function () {
-			callback(bin);
+			callback(bin, res.headers);
 		});
 	});
 
