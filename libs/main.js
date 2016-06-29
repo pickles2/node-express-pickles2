@@ -75,7 +75,7 @@ module.exports = function(execute_php, options, app){
 					case 'js':
 						break;
 					default:
-						var realpathResource = path.resolve(path.dirname(execute_php), './'+req.originalUrl);
+						var realpathResource = path.resolve(path.dirname(execute_php), './'+request_path);
 						var bin = '';
 						try {
 							bin = fs.readFileSync(realpathResource);
