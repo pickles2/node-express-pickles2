@@ -53,6 +53,9 @@ module.exports = function(execute_php, options, app){
 				if( request_path.indexOf( pxConf.path_controot ) === 0 ){
 					request_path = request_path.substr(pxConf.path_controot.length);
 					request_path = request_path.replace(new RegExp('^\\/*'), '/');
+				}else{
+					next();
+					return;
 				}
 				if( request_path.lastIndexOf( '/' ) === request_path.length-1 ){
 					request_path += 'index.html';
