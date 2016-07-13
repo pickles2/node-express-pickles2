@@ -8,6 +8,7 @@
   },
   "scripts": {
     "start": "node tests/server/server.js",
+    "preview": "open http://127.0.0.1:8080/",
     "test": "mocha --ui tdd ./tests/"
   },
   "author": "Tomoya Koyanagi",
