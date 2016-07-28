@@ -39,7 +39,10 @@ app.use(
                 }
                 callback(bin);
                 return;
-            }
+            },
+            'bin': '/path/to/php',
+            'ini': '/path/to/php.ini',
+            'extension_dir': '/path/to/ext/'
         },
         app
     )
@@ -51,6 +54,12 @@ app.use(
         <dd>起動済みのサーバーに動的に設定を与える必要がある場合に使用します。<br />このオプションは、Pickles 2 を利用した外部アプリケーションなどが、その都合によって加工を必要とする場合などを想定して用意されました。</dd>
     <dt>processor</dt>
         <dd>出力前の加工処理を設定します。 Pickles 2 とは本来無関係の機能で、ウェブサイトに由来する加工処理をここに実装することは望ましくありません。代わりに、Pickles 2 に搭載されている processor 機能を使用してください。<br />このオプションは、Pickles 2 を利用した外部アプリケーションなどが、その都合によって加工を必要とする場合などを想定して用意されました。</dd>
+    <dt>bin</dt>
+        <dd>PHP のパス。 px2agent へ引数として渡されます。</dd>
+    <dt>ini</dt>
+        <dd>PHP の php.ini のパス。 px2agent へ引数として渡されます。</dd>
+    <dt>extension_dir</dt>
+        <dd>PHP の extension のパス。 px2agent へ引数として渡されます。</dd>
 </dl>
 
 

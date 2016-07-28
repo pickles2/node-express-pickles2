@@ -43,7 +43,11 @@ module.exports = function(execute_php, options, app){
 				options.processor = new_options.processor || options.processor;
 			}
 
-			var px2proj = px2agent.createProject(execute_php);
+			var px2proj = px2agent.createProject(execute_php, {
+				'bin': options.bin ,
+				'ini': options.ini ,
+				'extension_dir': options.extension_dir
+			});
 
 
 			px2proj.get_config(function(pxConf){
