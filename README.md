@@ -63,14 +63,26 @@ app.use(
 </dl>
 
 
+## 更新履歴 - Change log
+
+### express-pickles2 2.0.0-beta.2 (2016年??月??日)
+
+- ??????????
+
+### express-pickles2 2.0.0-beta.1 (2016年7月28日)
+
+- パラメータ THEME をセッションに記憶するようになった。
+- コンフィグ `path_controot` が `/` 以外の場合に、 direct のパスが拾えない不具合を修正。
+- コンフィグ `path_controot` が `/` 以外の場合に、 controot 外にアクセスしたときに、正しくない画面が表示される不具合を修正。
+- オプション bin, ini, extension_dir を追加
 
 
-## License
+## ライセンス - License
 
 MIT License
 
 
-## Author
+## 作者 - Author
 
 - Tomoya Koyanagi <tomk79@gmail.com>
 - website: <http://www.pxt.jp/>
