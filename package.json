@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "body-parser": "^1.15.0",
+    "es6-promise": "^3.2.1",
     "express-session": "^1.13.0",
     "mime": "^1.3.4",
     "node-php-bin": "*",

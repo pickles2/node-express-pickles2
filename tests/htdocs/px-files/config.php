@@ -169,7 +169,9 @@ return call_user_func( function(){
 	// 最終出力の直前で実行される処理を設定します。
 	// この処理は、拡張子によらずすべてのリクエストが対象です。
 	// (HTMLの場合は、テーマの処理の後のコードが対象になります)
+	require(__DIR__.'/plugins/error/error.php');
 	$conf->funcs->before_output = [
+		'expressPickles2\tests\plugins\error\error::exec()'
 	];
 
 
@@ -190,15 +192,34 @@ return call_user_func( function(){
 
 	// -------- PHP Setting --------
 
-	// [memory_limit]
-	// PHPのメモリの使用量の上限を設定します。
-	// 正の整数値で上限値(byte)を与えます。
-	//     例: 1000000 (1,000,000 bytes)
-	//     例: "128K" (128 kilo bytes)
-	//     例: "128M" (128 mega bytes)
-	// -1 を与えた場合、無限(システムリソースの上限まで)に設定されます。
-	// サイトマップやコンテンツなどで、容量の大きなデータを扱う場合に調整してください。
+	/**
+	 * `memory_limit`
+	 *
+	 * PHPのメモリの使用量の上限を設定します。
+	 * 正の整数値で上限値(byte)を与えます。
+	 *
+	 *     例: 1000000 (1,000,000 bytes)
+	 *     例: "128K" (128 kilo bytes)
+	 *     例: "128M" (128 mega bytes)
+	 *
+	 * -1 を与えた場合、無限(システムリソースの上限まで)に設定されます。
+	 * サイトマップやコンテンツなどで、容量の大きなデータを扱う場合に調整してください。
+	 */
 	// @ini_set( 'memory_limit' , -1 );
+
+	/**
+	 * `display_errors`, `error_reporting`
+	 *
+	 * エラーを標準出力するための設定です。
+	 *
+	 * PHPの設定によっては、エラーが発生しても表示されない場合があります。
+	 * もしも、「なんか挙動がおかしいな？」と感じたら、
+	 * 必要に応じてこれらのコメントを外し、エラー出力を有効にしてみてください。
+	 *
+	 * エラーメッセージは問題解決の助けになります。
+	 */
+	@ini_set('display_errors', 1);
+	@ini_set('error_reporting', E_ALL);
 
 
 	return $conf;

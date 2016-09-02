@@ -5,6 +5,66 @@ var http = require('http');
 var cheerio = require('cheerio');
 
 var envProcessorString = '<!-- processor -->';
+var pickPhpErrors = require('../libs/pickPhpErrors.js');
+var hideBase64 = require('../libs/hideBase64.js');
+
+describe('pickPhpErrors', function() {
+
+	it("Notice Error", function(done) {
+		this.timeout(60*1000);
+
+		var fs = require('fs');
+		var data = fs.readFileSync(__dirname+'/pickPhpErrors/error_notice.json').toString();
+
+		pickPhpErrors(data, function(phpErrors, data){
+			// assert.ok(!data.match(/test\-string/));
+			assert.equal(typeof(data), typeof(''));
+			assert.equal(typeof(phpErrors), typeof([]));
+
+			done();
+			return;
+		});
+
+	});
+
+	it("No Error", function(done) {
+		this.timeout(60*1000);
+
+		var fs = require('fs');
+		var data = fs.readFileSync(__dirname+'/pickPhpErrors/noerror.json').toString();
+
+		pickPhpErrors(data, function(phpErrors, data){
+			// assert.ok(!data.match(/test\-string/));
+			assert.equal(typeof(data), typeof(''));
+			assert.equal(typeof(phpErrors), typeof([]));
+
+			done();
+			return;
+		});
+
+	});
+
+});
+
+describe('hideBase64', function() {
+
+	it("Notice Error", function(done) {
+		this.timeout(60*1000);
+
+		var fs = require('fs');
+		var data = fs.readFileSync(__dirname+'/pickPhpErrors/error_notice.json').toString();
+
+		hideBase64(data, function(data){
+			assert.ok(!data.match(/test\-string/));
+			assert.equal(typeof(data), typeof(''));
+
+			done();
+			return;
+		});
+
+	});
+
+});
 
 describe('mainTest', function() {
 
@@ -40,6 +100,7 @@ describe('mainTest', function() {
 
 	it("/index.html", function(done) {
 		this.timeout(60*1000);
+		// console.log(1234567890.1);
 
 		get('/index.html', function(bin){
 			// console.log(bin);
@@ -168,7 +229,12 @@ describe('(後片付け)', function() {
 
 });
 
+/**
+ * httpアクセスしてコンテンツを取得
+ */
 function get(url, callback){
+	// console.log(url);
+	// console.log('http://127.0.0.1:8080'+url);
 
 	// ダウンロードする
 	var bin = '';
