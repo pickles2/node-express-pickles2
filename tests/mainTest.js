@@ -76,9 +76,10 @@ describe('mainTest', function() {
 		app.use('/*', expressPickles2(
 			__dirname+'/htdocs/.px_execute.php',
 			{
-				'processor': function(bin, ext, callback){
+				'processor': function(bin, ext, callback, response){
 					// console.log(bin);
 					// console.log(ext);
+					// console.log(response);
 					switch(ext){
 						case 'html':
 						case 'htm':

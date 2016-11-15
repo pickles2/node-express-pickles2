@@ -168,6 +168,7 @@ module.exports = function(execute_php, options, app){
 
 				rtn.bin = px2ResponseCode;
 				rtn.status = 200;
+				rtn.errors = [];
 
 				pickPhpErrors(px2ResponseCode, function(_phpErrors, result){
 					phpErrors = _phpErrors;
@@ -181,11 +182,16 @@ module.exports = function(execute_php, options, app){
 
 				try {
 					var json = JSON.parse(rtn.bin);
-					rtn.status = json.status;
+					rtn = json;
 					rtn.bin = json.body_base64;
-					// console.log(data);
+				}catch(e){
+					rtn.status = 500;
+					rtn.errors.push('FAILED to parse JSON string.');
+				}
+				try {
 					rtn.bin = new Buffer(rtn.bin, 'base64').toString();
 				}catch(e){
+					rtn.errors.push('FAILED to parse "body_base64".');
 				}
 				rlv();
 			}); })
@@ -202,7 +208,7 @@ module.exports = function(execute_php, options, app){
 				options.processor(rtn.bin, ext, function(bin){
 					rtn.bin = bin;
 					rlv();
-				});
+				}, rtn);
 
 			}); })
 			.then(function(){ return new Promise(function(rlv, rjt){
