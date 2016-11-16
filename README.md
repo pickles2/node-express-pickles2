@@ -33,11 +33,11 @@ app.use(
                 callback(execute_php, options);
                 return;
             },
-            'processor': function(bin, ext, callback){
+            'processor': function(html, ext, callback, response){
                 if( ext == 'html' ){
-                    bin = yourCustomProcessor(bin);
+                    html = yourCustomProcessor(html);
                 }
-                callback(bin);
+                callback(html);
                 return;
             },
             'bin': '/path/to/php',
@@ -53,7 +53,20 @@ app.use(
     <dt>liveConfig</dt>
         <dd>起動済みのサーバーに動的に設定を与える必要がある場合に使用します。<br />このオプションは、Pickles 2 を利用した外部アプリケーションなどが、その都合によって加工を必要とする場合などを想定して用意されました。</dd>
     <dt>processor</dt>
-        <dd>出力前の加工処理を設定します。 Pickles 2 とは本来無関係の機能で、ウェブサイトに由来する加工処理をここに実装することは望ましくありません。代わりに、Pickles 2 に搭載されている processor 機能を使用してください。<br />このオプションは、Pickles 2 を利用した外部アプリケーションなどが、その都合によって加工を必要とする場合などを想定して用意されました。</dd>
+        <dd>出力前の加工処理を設定します。 Pickles 2 とは本来無関係の機能で、ウェブサイトに由来する加工処理をここに実装することは望ましくありません。代わりに、Pickles 2 に搭載されている processor 機能を使用してください。<br />
+        このオプションは、Pickles 2 を利用した外部アプリケーションなどが、その都合によって加工を必要とする場合などを想定して用意されました。<br />
+        引数は次の通りです。<br />
+        <dl>
+            <dt>html</dt>
+                <dd>加工前のHTMLソースコードが渡されます。</dd>
+            <dt>ext</dt>
+                <dd>コンテンツの拡張子が渡されます。</dd>
+            <dt>callback</dt>
+                <dd>コールバック関数です。引数に、加工後のHTMLソースコードを渡してください。</dd>
+            <dt>response</dt>
+                <dd>Pickles 2 の応答情報オブジェクトです。エラーメッセージや、relatedlinks にアクセスする必要がある場合は、このオブジェクトに格納されています。</dd>
+        </dl>
+        </dd>
     <dt>bin</dt>
         <dd>PHP のパス。 px2agent へ引数として渡されます。</dd>
     <dt>ini</dt>
@@ -67,7 +80,7 @@ app.use(
 
 ### express-pickles2 2.0.0-beta.2 (2016年??月??日)
 
-- ??????????
+- `processor` の第4引数に `response` を追加。
 
 ### express-pickles2 2.0.0-beta.1 (2016年7月28日)
 
