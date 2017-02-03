@@ -6,6 +6,7 @@ module.exports = function(execute_php, options, app){
 	var mime = require('mime');
 	var path = require('path');
 	var fs = require('fs');
+	var utils79 = require('utils79');
 	var querystring = require('querystring');
 	var Promise = require('es6-promise').Promise;
 	// console.log(px2proj);
@@ -214,16 +215,43 @@ module.exports = function(execute_php, options, app){
 			.then(function(){ return new Promise(function(rlv, rjt){
 				// console.log( '---- hideBase64()' );
 
+				// エラーが起きた場合に base64 状態のコンテンツがエラーメッセージとして出力されると、
+				// そこから情報を読み取ることができる。
+				// 開発者がこのことを意図せずサポートフォーラム等にコードを投稿し、情報流出につながる恐れがあるので、
+				// base64のままデコードに失敗した情報が含まれる場合は、念のため削除してから出力するようにする。
 				hideBase64(rtn.bin, function(result){
 					rtn.bin = result;
 					rlv();
 				});
 			}); })
 			.then(function(){ return new Promise(function(rlv, rjt){
+				// console.log( '---- Content-type header' );
+
+				try {
+					// pickles2/px-fw-2.x@2.0.29 以降、
+					// `rtn.header` にHTTPレスポンスヘッダーを格納するように拡張された。
+					// この情報がある場合は、そのままクライアントへ転送する。
+					// (通常この中に、 Content-type ヘッダーが含まれている)
+					for(var i in rtn.header){
+						var headerStr = rtn.header[i];
+						try {
+							var parsedHeaderStr = headerStr.split(/\:/);
+							// console.log(parsedHeaderStr);
+							res.set(utils79.trim(parsedHeaderStr[0]), utils79.trim(parsedHeaderStr[1]));
+						} catch (e) {
+							console.error('Failed to parse header string - ' + headerStr);
+						}
+					}
+				} catch (e) {
+					res.set('Content-Type', mimeType);
+				}
+
+				rlv();
+			}); })
+			.then(function(){ return new Promise(function(rlv, rjt){
 				// console.log( '---- response' );
 
 				res
-					.set('Content-Type', mimeType)
 					.status(rtn.status)
 					.type(ext)
 					.send(rtn.bin)
