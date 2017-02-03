@@ -37,6 +37,7 @@ module.exports = function(execute_php, options, app){
 		// console.log(req._parsedUrl);
 		var pickPhpErrors = require('./pickPhpErrors.js');
 		var hideBase64 = require('./hideBase64.js');
+		var parseHtaccess = require('./parseHtaccess.js');
 		var px2proj;
 		var mimeType;
 		var ext;
@@ -45,6 +46,8 @@ module.exports = function(execute_php, options, app){
 		var rtn = {};
 		var px2ResponseCode;
 		var phpErrors;
+		var pxConf;
+		var htaccessInfo;
 
 		new Promise(function(rlv){rlv();})
 			.then(function(){ return new Promise(function(rlv, rjt){
@@ -65,6 +68,15 @@ module.exports = function(execute_php, options, app){
 
 			}); })
 			.then(function(){ return new Promise(function(rlv, rjt){
+				// console.log( '---- parse .htaccess' );
+
+				parseHtaccess(execute_php, function(result){
+					htaccessInfo = result;
+					rlv();
+				});
+
+			}); })
+			.then(function(){ return new Promise(function(rlv, rjt){
 				// console.log( '---- get_config()' );
 
 				px2proj = px2agent.createProject(execute_php, {
@@ -74,65 +86,64 @@ module.exports = function(execute_php, options, app){
 				});
 
 
-				px2proj.get_config(function(pxConf){
+				px2proj.get_config(function(_pxConf){
 					// console.log(pxConf);
-
-					request_path = req._parsedUrl.pathname;
-					if( request_path.indexOf( pxConf.path_controot ) === 0 ){
-						request_path = request_path.substr(pxConf.path_controot.length);
-						request_path = request_path.replace(new RegExp('^\\/*'), '/');
-					}else{
-						next();
-						rjt();
-						return;
-					}
-					if( request_path.lastIndexOf( '/' ) === request_path.length-1 ){
-						request_path += 'index.html';
-					}
-					// console.log(request_path);
-
-					mimeType = mime.lookup( request_path );
-					// console.log(mimeType);
-					ext = mime.extension(mimeType);
-					// console.log(ext);
-					if( !ext ){
-						ext = 'html';
-					}
-					ext = ext.toLowerCase();
-					// console.log( ext );
-					switch( ext ){
-						case 'html':
-						case 'htm':
-						case 'css':
-						case 'js':
-							break;
-						default:
-							var realpathResource = path.resolve(path.dirname(execute_php), './'+request_path);
-							var bin = '';
-							try {
-								bin = fs.readFileSync(realpathResource);
-								res
-									.set('Content-Type', mimeType)
-									.send( bin )
-									.end()
-								;
-							} catch (e) {
-								res
-									.set('Content-Type', 'text/html')
-									.status( 404 )
-									.send( 'Not Found' )
-									.end()
-								;
-							}
-							// console.log( realpathResource );
-							rjt();
-							return;
-							break;
-					}
-
+					pxConf = _pxConf;
 					rlv();
-
 				});
+			}); })
+			.then(function(){ return new Promise(function(rlv, rjt){
+				// console.log( '---- routing' );
+
+				request_path = req._parsedUrl.pathname;
+				if( request_path.indexOf( pxConf.path_controot ) === 0 ){
+					request_path = request_path.substr(pxConf.path_controot.length);
+					request_path = request_path.replace(new RegExp('^\\/*'), '/');
+				}else{
+					next();
+					rjt();
+					return;
+				}
+				if( request_path.lastIndexOf( '/' ) === request_path.length-1 ){
+					request_path += 'index.html';
+				}
+				// console.log(request_path);
+
+				mimeType = mime.lookup( request_path );
+				// console.log(mimeType);
+				// ext = mime.extension(mimeType);
+				ext = request_path.replace(/[\s\S]*\.([\S]*?)$/, '$1');
+				// console.log(ext);
+				if( !ext ){
+					ext = 'html';
+				}
+				ext = ext.toLowerCase();
+				// console.log( ext );
+				if( !ext.match( htaccessInfo.extensionPattern ) ){
+					var realpathResource = path.resolve(path.dirname(execute_php), './'+request_path);
+					var bin = '';
+					try {
+						bin = fs.readFileSync(realpathResource);
+						res
+							.set('Content-Type', mimeType)
+							.send( bin )
+							.end()
+						;
+					} catch (e) {
+						res
+							.set('Content-Type', 'text/html')
+							.status( 404 )
+							.send( 'Not Found' )
+							.end()
+						;
+					}
+					// console.log( realpathResource );
+					rjt();
+					return;
+				}
+
+				rlv();
+
 			}); })
 			.then(function(){ return new Promise(function(rlv, rjt){
 				// console.log( '---- exec pickles 2' );
@@ -253,7 +264,6 @@ module.exports = function(execute_php, options, app){
 
 				res
 					.status(rtn.status)
-					.type(ext)
 					.send(rtn.bin)
 					.end()
 				;

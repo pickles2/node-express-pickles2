@@ -83,6 +83,7 @@ app.use(
 - `processor` の第4引数に `response` を追加。
 - PHP のエラーメッセージの先頭に文字列 `PHP ` が付いている場合を考慮するように修正。
 - Pickles 2 が出力するJSONに格納される `header` に対応。 (pickles2/px-fw-2.x@2.0.29 以降で有効)
+- Pickles 2 のコンテンツルートに設置された `.htaccess` を簡易的に解析し、 Pickles 2 に渡すべき 拡張子の一覧を取得して制御するようになった。
 
 ### express-pickles2 2.0.0-beta.1 (2016年7月28日)
 
