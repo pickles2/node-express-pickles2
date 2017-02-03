@@ -32,7 +32,7 @@ return call_user_func( function(){
 	$conf->output_eol_coding = 'lf'; // 出力改行コード名 (cr|lf|crlf)
 	$conf->session_name = 'PXSID'; // セッション名
 	$conf->session_expire = 1800; // セッションの有効期間
-	$conf->allow_pxcommands = 0; // PX Commands のウェブインターフェイスからの実行を許可
+	$conf->allow_pxcommands = 1; // PX Commands のウェブインターフェイスからの実行を許可
 	$conf->default_timezone = 'Asia/Tokyo';
 
 
