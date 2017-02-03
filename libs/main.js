@@ -111,7 +111,6 @@ module.exports = function(execute_php, options, app){
 
 				mimeType = mime.lookup( request_path );
 				// console.log(mimeType);
-				// ext = mime.extension(mimeType);
 				ext = request_path.replace(/[\s\S]*\.([\S]*?)$/, '$1');
 				// console.log(ext);
 				if( !ext ){
@@ -208,15 +207,44 @@ module.exports = function(execute_php, options, app){
 				rlv();
 			}); })
 			.then(function(){ return new Promise(function(rlv, rjt){
-				// console.log( '---- parse base64 string' );
+				// console.log( '---- join error string' );
 
 				rtn.bin = (phpErrors.join("\n") + rtn.bin);
 				rlv();
 
 			}); })
 			.then(function(){ return new Promise(function(rlv, rjt){
-				// console.log( '---- exec processor option' );
+				// console.log( '---- Content-type header' );
 
+				try {
+					// pickles2/px-fw-2.x@2.0.29 以降、
+					// `rtn.header` にHTTPレスポンスヘッダーを格納するように拡張された。
+					// この情報がある場合は、そのままクライアントへ転送する。
+					// (通常この中に、 Content-type ヘッダーが含まれている)
+					for(var i in rtn.header){
+						var headerStr = rtn.header[i];
+						try {
+							var parsedHeaderStr = headerStr.split(/\:/);
+							// console.log(parsedHeaderStr);
+							res.set(utils79.trim(parsedHeaderStr[0]), utils79.trim(parsedHeaderStr[1]));
+
+							if( parsedHeaderStr[0].toLowerCase() === 'content-type' ){
+								var _mimeType = parsedHeaderStr[1];
+								ext = mime.extension(_mimeType);
+							}
+						} catch (e) {
+							console.error('Failed to parse header string - ' + headerStr);
+						}
+					}
+				} catch (e) {
+					res.set('Content-Type', mimeType);
+					ext = mime.extension(mimeType);
+				}
+
+				rlv();
+			}); })
+			.then(function(){ return new Promise(function(rlv, rjt){
+				// console.log( '---- exec processor option' );
 				options.processor(rtn.bin, ext, function(bin){
 					rtn.bin = bin;
 					rlv();
@@ -234,30 +262,6 @@ module.exports = function(execute_php, options, app){
 					rtn.bin = result;
 					rlv();
 				});
-			}); })
-			.then(function(){ return new Promise(function(rlv, rjt){
-				// console.log( '---- Content-type header' );
-
-				try {
-					// pickles2/px-fw-2.x@2.0.29 以降、
-					// `rtn.header` にHTTPレスポンスヘッダーを格納するように拡張された。
-					// この情報がある場合は、そのままクライアントへ転送する。
-					// (通常この中に、 Content-type ヘッダーが含まれている)
-					for(var i in rtn.header){
-						var headerStr = rtn.header[i];
-						try {
-							var parsedHeaderStr = headerStr.split(/\:/);
-							// console.log(parsedHeaderStr);
-							res.set(utils79.trim(parsedHeaderStr[0]), utils79.trim(parsedHeaderStr[1]));
-						} catch (e) {
-							console.error('Failed to parse header string - ' + headerStr);
-						}
-					}
-				} catch (e) {
-					res.set('Content-Type', mimeType);
-				}
-
-				rlv();
 			}); })
 			.then(function(){ return new Promise(function(rlv, rjt){
 				// console.log( '---- response' );
