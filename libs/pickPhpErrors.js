@@ -10,7 +10,7 @@ module.exports = function( phpOutput, callback ){
 	// console.log('=-=-=-=-=-=-=-=-=-=-=');
 	// console.log(phpOutput);
 
-	var regexp = /((?:Notice|Warning|Parse\ error|Fatal\ error)\:[\s\S]+?\ in\ [\s\S]+?\ on\ line\ [0-9]+)/g;
+	var regexp = /((?:PHP )?(?:Notice|Warning|Parse\ error|Fatal\ error)\:[\s\S]+?\ in\ [\s\S]+?\ on\ line\ [0-9]+)/g;
 	var phpErrors = phpOutput.match( regexp );
 	if( phpErrors === null ){
 		phpErrors = [];
