@@ -17,10 +17,21 @@ module.exports = function( execute_php, callback ){
 
 	// Pickles 2 が処理するべき拡張子のパターンを取得
 	try {
-		var res = htaccess.match(/RewriteCond[\s]+\%\{REQUEST\_URI\}[\s]+\/\(\.\*\?\\\.\(\?\:([\s\S]*?)\)\)\?\$/);
-		// console.log(RegExp.$1);
-		rtn.extensionPattern = new RegExp('^(?:'+RegExp.$1+')$', 'g');
-		// console.log(rtn.extensionPattern);
+		var htaccess_rows = htaccess.split(/\r\n|\r|\n/);
+		for( var idx in htaccess_rows ){
+			htaccess_rows[idx] = utils79.trim( htaccess_rows[idx] );
+			if( htaccess_rows[idx].match( /^\#/g ) ){
+				continue;
+			}
+			var res = htaccess_rows[idx].match(/^RewriteCond[\s]+\%\{REQUEST\_URI\}[\s]+\/\(\.\*\?\\\.\(\?\:([\s\S]*?)\)\)\?\$/);
+			if( !res ){
+				continue;
+			}
+			// console.log(RegExp.$1);
+			rtn.extensionPattern = new RegExp('^(?:'+RegExp.$1+')$', 'g');
+			// console.log(rtn.extensionPattern);
+			break;
+		}
 	} catch (e) {
 	}
 
