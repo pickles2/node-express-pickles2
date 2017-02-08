@@ -6,6 +6,7 @@ module.exports = function(execute_php, options, app){
 	var mime = require('mime');
 	var path = require('path');
 	var fs = require('fs');
+	var utils79 = require('utils79');
 	var querystring = require('querystring');
 	var Promise = require('es6-promise').Promise;
 	// console.log(px2proj);
@@ -36,6 +37,7 @@ module.exports = function(execute_php, options, app){
 		// console.log(req._parsedUrl);
 		var pickPhpErrors = require('./pickPhpErrors.js');
 		var hideBase64 = require('./hideBase64.js');
+		var parseHtaccess = require('./parseHtaccess.js');
 		var px2proj;
 		var mimeType;
 		var ext;
@@ -44,6 +46,8 @@ module.exports = function(execute_php, options, app){
 		var rtn = {};
 		var px2ResponseCode;
 		var phpErrors;
+		var pxConf;
+		var htaccessInfo;
 
 		new Promise(function(rlv){rlv();})
 			.then(function(){ return new Promise(function(rlv, rjt){
@@ -64,6 +68,15 @@ module.exports = function(execute_php, options, app){
 
 			}); })
 			.then(function(){ return new Promise(function(rlv, rjt){
+				// console.log( '---- parse .htaccess' );
+
+				parseHtaccess(execute_php, function(result){
+					htaccessInfo = result;
+					rlv();
+				});
+
+			}); })
+			.then(function(){ return new Promise(function(rlv, rjt){
 				// console.log( '---- get_config()' );
 
 				px2proj = px2agent.createProject(execute_php, {
@@ -73,65 +86,63 @@ module.exports = function(execute_php, options, app){
 				});
 
 
-				px2proj.get_config(function(pxConf){
+				px2proj.get_config(function(_pxConf){
 					// console.log(pxConf);
-
-					request_path = req._parsedUrl.pathname;
-					if( request_path.indexOf( pxConf.path_controot ) === 0 ){
-						request_path = request_path.substr(pxConf.path_controot.length);
-						request_path = request_path.replace(new RegExp('^\\/*'), '/');
-					}else{
-						next();
-						rjt();
-						return;
-					}
-					if( request_path.lastIndexOf( '/' ) === request_path.length-1 ){
-						request_path += 'index.html';
-					}
-					// console.log(request_path);
-
-					mimeType = mime.lookup( request_path );
-					// console.log(mimeType);
-					ext = mime.extension(mimeType);
-					// console.log(ext);
-					if( !ext ){
-						ext = 'html';
-					}
-					ext = ext.toLowerCase();
-					// console.log( ext );
-					switch( ext ){
-						case 'html':
-						case 'htm':
-						case 'css':
-						case 'js':
-							break;
-						default:
-							var realpathResource = path.resolve(path.dirname(execute_php), './'+request_path);
-							var bin = '';
-							try {
-								bin = fs.readFileSync(realpathResource);
-								res
-									.set('Content-Type', mimeType)
-									.send( bin )
-									.end()
-								;
-							} catch (e) {
-								res
-									.set('Content-Type', 'text/html')
-									.status( 404 )
-									.send( 'Not Found' )
-									.end()
-								;
-							}
-							// console.log( realpathResource );
-							rjt();
-							return;
-							break;
-					}
-
+					pxConf = _pxConf;
 					rlv();
-
 				});
+			}); })
+			.then(function(){ return new Promise(function(rlv, rjt){
+				// console.log( '---- routing' );
+
+				request_path = req._parsedUrl.pathname;
+				if( request_path.indexOf( pxConf.path_controot ) === 0 ){
+					request_path = request_path.substr(pxConf.path_controot.length);
+					request_path = request_path.replace(new RegExp('^\\/*'), '/');
+				}else{
+					next();
+					rjt();
+					return;
+				}
+				if( request_path.lastIndexOf( '/' ) === request_path.length-1 ){
+					request_path += 'index.html';
+				}
+				// console.log(request_path);
+
+				mimeType = mime.lookup( request_path );
+				// console.log(mimeType);
+				ext = request_path.replace(/[\s\S]*\.([\S]*?)$/, '$1');
+				// console.log(ext);
+				if( !ext ){
+					ext = 'html';
+				}
+				ext = ext.toLowerCase();
+				// console.log( ext );
+				if( !ext.match( htaccessInfo.extensionPattern ) ){
+					var realpathResource = path.resolve(path.dirname(execute_php), './'+request_path);
+					var bin = '';
+					try {
+						bin = fs.readFileSync(realpathResource);
+						res
+							.set('Content-Type', mimeType)
+							.send( bin )
+							.end()
+						;
+					} catch (e) {
+						res
+							.set('Content-Type', 'text/html')
+							.status( 404 )
+							.send( 'Not Found' )
+							.end()
+						;
+					}
+					// console.log( realpathResource );
+					rjt();
+					return;
+				}
+
+				rlv();
+
 			}); })
 			.then(function(){ return new Promise(function(rlv, rjt){
 				// console.log( '---- exec pickles 2' );
@@ -196,15 +207,44 @@ module.exports = function(execute_php, options, app){
 				rlv();
 			}); })
 			.then(function(){ return new Promise(function(rlv, rjt){
-				// console.log( '---- parse base64 string' );
+				// console.log( '---- join error string' );
 
 				rtn.bin = (phpErrors.join("\n") + rtn.bin);
 				rlv();
 
 			}); })
 			.then(function(){ return new Promise(function(rlv, rjt){
-				// console.log( '---- exec processor option' );
+				// console.log( '---- Content-type header' );
 
+				try {
+					// pickles2/px-fw-2.x@2.0.29 以降、
+					// `rtn.header` にHTTPレスポンスヘッダーを格納するように拡張された。
+					// この情報がある場合は、そのままクライアントへ転送する。
+					// (通常この中に、 Content-type ヘッダーが含まれている)
+					for(var i in rtn.header){
+						var headerStr = rtn.header[i];
+						try {
+							var parsedHeaderStr = headerStr.split(/\:/);
+							// console.log(parsedHeaderStr);
+							res.set(utils79.trim(parsedHeaderStr[0]), utils79.trim(parsedHeaderStr[1]));
+
+							if( parsedHeaderStr[0].toLowerCase() === 'content-type' ){
+								var _mimeType = parsedHeaderStr[1];
+								ext = mime.extension(_mimeType);
+							}
+						} catch (e) {
+							console.error('Failed to parse header string - ' + headerStr);
+						}
+					}
+				} catch (e) {
+					res.set('Content-Type', mimeType);
+					ext = mime.extension(mimeType);
+				}
+
+				rlv();
+			}); })
+			.then(function(){ return new Promise(function(rlv, rjt){
+				// console.log( '---- exec processor option' );
 				options.processor(rtn.bin, ext, function(bin){
 					rtn.bin = bin;
 					rlv();
@@ -214,6 +254,10 @@ module.exports = function(execute_php, options, app){
 			.then(function(){ return new Promise(function(rlv, rjt){
 				// console.log( '---- hideBase64()' );
 
+				// エラーが起きた場合に base64 状態のコンテンツがエラーメッセージとして出力されると、
+				// そこから情報を読み取ることができる。
+				// 開発者がこのことを意図せずサポートフォーラム等にコードを投稿し、情報流出につながる恐れがあるので、
+				// base64のままデコードに失敗した情報が含まれる場合は、念のため削除してから出力するようにする。
 				hideBase64(rtn.bin, function(result){
 					rtn.bin = result;
 					rlv();
@@ -223,9 +267,7 @@ module.exports = function(execute_php, options, app){
 				// console.log( '---- response' );
 
 				res
-					.set('Content-Type', mimeType)
 					.status(rtn.status)
-					.type(ext)
 					.send(rtn.bin)
 					.end()
 				;

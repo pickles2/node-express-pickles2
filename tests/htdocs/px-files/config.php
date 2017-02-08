@@ -32,7 +32,7 @@ return call_user_func( function(){
 	$conf->output_eol_coding = 'lf'; // 出力改行コード名 (cr|lf|crlf)
 	$conf->session_name = 'PXSID'; // セッション名
 	$conf->session_expire = 1800; // セッションの有効期間
-	$conf->allow_pxcommands = 0; // PX Commands のウェブインターフェイスからの実行を許可
+	$conf->allow_pxcommands = 1; // PX Commands のウェブインターフェイスからの実行を許可
 	$conf->default_timezone = 'Asia/Tokyo';
 
 
@@ -72,6 +72,9 @@ return call_user_func( function(){
 
 		'*.html' => 'html' ,
 		'*.htm' => 'html' ,
+		'*.custom-html' => 'html' ,
+		'*.shtml' => 'html' ,
+		'*.shtm' => 'html' ,
 		'*.css' => 'css' ,
 		'*.js' => 'js' ,
 		'*.png' => 'direct' ,
@@ -80,6 +83,25 @@ return call_user_func( function(){
 		'*.svg' => 'direct' ,
 	);
 
+
+	/**
+	 * paths_enable_sitemap
+	 *
+	 * サイトマップのロードを有効にするパスのパターンを設定します。
+	 * ワイルドカードとして "*"(アスタリスク) が使用可能です。
+	 *
+	 * サイトマップ中のページ数が増えると、サイトマップのロード自体に時間を要する場合があります。
+	 * サイトマップへのアクセスが必要ないファイルでは、この処理はスキップするほうがよいでしょう。
+	 *
+	 * 多くの場合では、 *.html と *.htm 以外ではロードする必要はありません。
+	 */
+	$conf->paths_enable_sitemap = array(
+		'*.html',
+		'*.htm',
+		'*.shtml',
+		'*.shtm',
+		'*.custom-html',
+	);
 
 	// -------- functions --------
 
@@ -218,7 +240,7 @@ return call_user_func( function(){
 	 *
 	 * エラーメッセージは問題解決の助けになります。
 	 */
-	@ini_set('display_errors', 1);
+	@ini_set('display_errors', 0);
 	@ini_set('error_reporting', E_ALL);
 
 

@@ -7,6 +7,7 @@ var cheerio = require('cheerio');
 var envProcessorString = '<!-- processor -->';
 var pickPhpErrors = require('../libs/pickPhpErrors.js');
 var hideBase64 = require('../libs/hideBase64.js');
+var parseHtaccess = require('../libs/parseHtaccess.js');
 
 describe('pickPhpErrors', function() {
 
@@ -57,6 +58,31 @@ describe('hideBase64', function() {
 		hideBase64(data, function(data){
 			assert.ok(!data.match(/test\-string/));
 			assert.equal(typeof(data), typeof(''));
+
+			done();
+			return;
+		});
+
+	});
+
+});
+
+describe('parseHtaccess', function() {
+
+	it("parseHtaccess", function(done) {
+		this.timeout(60*1000);
+
+		var fs = require('fs');
+		var data = fs.readFileSync(__dirname+'/pickPhpErrors/error_notice.json').toString();
+
+		parseHtaccess(__dirname+'/htdocs/.px_execute.php', function(htaccessInfo){
+			assert.ok( 'js'.match(htaccessInfo.extensionPattern) );
+			assert.ok( 'html'.match(htaccessInfo.extensionPattern) );
+			assert.ok( 'htm'.match(htaccessInfo.extensionPattern) );
+			assert.ok( 'shtml'.match(htaccessInfo.extensionPattern) );
+			assert.ok( 'shtm'.match(htaccessInfo.extensionPattern) );
+			assert.ok( 'htmllll'.match(htaccessInfo.extensionPattern) === null );
+			assert.ok( 'undefined-ext'.match(htaccessInfo.extensionPattern) === null );
 
 			done();
 			return;
@@ -156,6 +182,21 @@ describe('mainTest', function() {
 
 	});
 
+	it("追加した拡張子 *.shtml", function(done) {
+		this.timeout(60*1000);
+
+		get('/sample_pages/ext_shtml.shtml', function(bin){
+			// console.log(bin);
+
+			var $ = cheerio.load(bin, {decodeEntities: false});
+			var $testElm = $('.contents').eq(0);
+			assert.equal($testElm.attr('data-contents-area'), 'main');
+
+			done();
+		});
+
+	});
+
 	it("index.html を省略する", function(done) {
 		this.timeout(60*1000);
 
@@ -216,15 +257,13 @@ describe('(後片付け)', function() {
 		this.timeout(60*1000);
 
 		setTimeout(function(){
-			get('/index.html?PX=clearcache', function(bin){
-				// console.log(bin);
-				get('/subproj/proj2/index.html?PX=clearcache', function(bin){
-					// console.log(bin);
+			require('child_process').exec('php '+__dirname+'/htdocs/.px_execute.php /?PX=clearcache', {}, function(){
+				require('child_process').exec('php '+__dirname+'/htdocs/subproj/proj2/.px_execute.php /?PX=clearcache', {}, function(){
 					assert.equal(1, 1);
 					done();
 				});
 			});
-		}, 2*1000);
+		}, 100);
 
 	});
 

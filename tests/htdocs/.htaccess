@@ -1,0 +1,32 @@
+#-------------------------
+#  for pickles2
+<IfModule mod_rewrite.c>
+	<IfModule mod_negotiation.c>
+		Options -MultiViews +FollowSymLinks
+	</IfModule>
+
+	RewriteEngine on
+
+	RewriteCond %{REQUEST_URI} !^.*?/\.px_execute.php/
+	RewriteCond %{REQUEST_URI} /(.*?\.(?:html|htm|shtml?|css|js))?$
+	RewriteRule ^(.*)$ \.px_execute\.php/$1 [L]
+
+	RewriteCond %{REQUEST_URI} !^.*?/\.px_execute.php/
+	RewriteCond %{REQUEST_URI} /(.*?\.(?:ignore)([\.\/].*)?)$
+	RewriteRule ^(.*)$ \.px_execute\.php/\.ignore.html [L]
+
+</IfModule>
+
+
+#-------------------------
+#  PHP options
+
+# for hide errors
+#php_flag display_errors Off
+
+# for display ALL errors
+#php_flag display_errors On
+#php_value error_reporting 32767
+
+# for large contents
+#php_value memory_limit -1
