@@ -5,6 +5,7 @@ var cheerio = require('cheerio');
 var port = 8080;
 
 var app = express();
+app.set('etag', false);
 app.use('/subproj/proj2/*', expressPickles2(__dirname+'/../htdocs/subproj/proj2/.px_execute.php') );
 app.use('/*', expressPickles2(
 	__dirname+'/../htdocs/.px_execute.php',
