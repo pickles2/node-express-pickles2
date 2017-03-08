@@ -2,7 +2,6 @@
  * express-pickles2.js
  */
 module.exports = function(execute_php, options, app){
-	var px2agent = require('px2agent');
 	var mime = require('mime');
 	var path = require('path');
 	var fs = require('fs');
@@ -12,6 +11,9 @@ module.exports = function(execute_php, options, app){
 	// console.log(px2proj);
 	// console.log(execute_php);
 	// console.log(path.dirname(execute_php));
+
+	var Px2CondMgr = require('./Px2CondMgr.js'),
+		px2CondMgr = new Px2CondMgr();
 
 	if(app){
 		app.use( require('body-parser')() );
@@ -79,18 +81,12 @@ module.exports = function(execute_php, options, app){
 			.then(function(){ return new Promise(function(rlv, rjt){
 				// console.log( '---- get_config()' );
 
-				px2proj = px2agent.createProject(execute_php, {
-					'bin': options.bin ,
-					'ini': options.ini ,
-					'extension_dir': options.extension_dir
-				});
-
-
-				px2proj.get_config(function(_pxConf){
-					// console.log(pxConf);
+				px2CondMgr.get(execute_php, options, function(_px2proj, _pxConf){
+					px2proj = _px2proj;
 					pxConf = _pxConf;
 					rlv();
 				});
+
 			}); })
 			.then(function(){ return new Promise(function(rlv, rjt){
 				// console.log( '---- routing' );

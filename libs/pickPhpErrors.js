@@ -2,7 +2,7 @@
  * pickPhpErrors.js
  */
 module.exports = function( phpOutput, callback ){
-	delete(require.cache[require('path').resolve(__filename)]);
+	// delete(require.cache[require('path').resolve(__filename)]);
 	callback = callback || function(){};
 	// var php = require('phpjs');
 	var phpErrors = [];
