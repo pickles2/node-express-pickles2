@@ -2,7 +2,7 @@
  * parseHtaccess.js
  */
 module.exports = function( execute_php, callback ){
-	delete(require.cache[require('path').resolve(__filename)]);
+	// delete(require.cache[require('path').resolve(__filename)]);
 	callback = callback || function(){};
 	var utils79 = require('utils79');
 	var rtn = {};
