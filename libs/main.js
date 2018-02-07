@@ -156,9 +156,14 @@ module.exports = function(execute_php, options, app){
 
 				var query = request_path + (req._parsedUrl.search||'');
 
+				var httpUserAgent = 'Mozilla/5.0';
+				try{
+					httpUserAgent = req.headers['user-agent'];
+				}catch(e){}
+
 				px2proj.query(query, {
 					"output": "json",
-					"userAgent": "Mozilla/5.0",
+					"userAgent": httpUserAgent,
 					"success": function(data){
 						// console.log(data);
 					},
