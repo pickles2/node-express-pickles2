@@ -78,7 +78,7 @@ app.use(
 
 ## 更新履歴 - Change log
 
-### express-pickles2 2.0.0-beta.2 (2018年??月??日)
+### express-pickles2 2.0.0-beta.2 (2018年3月5日)
 
 - `processor` の第4引数に `response` を追加。
 - PHP のエラーメッセージの先頭に文字列 `PHP ` が付いている場合を考慮するように修正。
