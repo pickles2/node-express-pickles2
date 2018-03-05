@@ -78,12 +78,13 @@ app.use(
 
 ## 更新履歴 - Change log
 
-### express-pickles2 2.0.0-beta.2 (2017年??月??日)
+### express-pickles2 2.0.0-beta.2 (2018年??月??日)
 
 - `processor` の第4引数に `response` を追加。
 - PHP のエラーメッセージの先頭に文字列 `PHP ` が付いている場合を考慮するように修正。
 - Pickles 2 が出力するJSONに格納される `header` に対応。 (pickles2/px-fw-2.x@2.0.29 以降で有効)
 - Pickles 2 のコンテンツルートに設置された `.htaccess` を簡易的に解析し、 Pickles 2 に渡すべき 拡張子の一覧を取得して制御するようになった。
+- クライアントの `HTTP_USER_AGENT` を Pickles 2 へバイパスするようになった。
 - パフォーマンス向上。Pickles 2 のコンフィグ情報をキャッシュし、アクセス毎の負荷を低減した。
 
 ### express-pickles2 2.0.0-beta.1 (2016年7月28日)
