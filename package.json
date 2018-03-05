@@ -1,7 +1,7 @@
 {
   "name": "express-pickles2",
-  "version": "2.0.0-beta.2",
-  "private": false,
+  "version": "2.0.0-beta.3.alpha.1+nb",
+  "private": true,
   "description": "Pickles 2 Server Emulator for Express.",
   "main": "libs/main.js",
   "repository": {
