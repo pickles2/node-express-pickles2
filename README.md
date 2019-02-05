@@ -1,6 +1,6 @@
 # node-express-pickles2
 
-[Pickles 2](http://pickles2.pxt.jp/) Server Emulator for Express.
+[Pickles 2](https://pickles2.pxt.jp/) Server Emulator for Express.
 
 ## Install
 
@@ -78,7 +78,7 @@ app.use(
 
 ## 更新履歴 - Change log
 
-### express-pickles2 2.0.0-beta.3 (未定)
+### express-pickles2 2.0.0-beta.3 (リリース日未定)
 
 - ???????????????????????????????
 
@@ -107,5 +107,5 @@ MIT License
 ## 作者 - Author
 
 - Tomoya Koyanagi <tomk79@gmail.com>
-- website: <http://www.pxt.jp/>
-- Twitter: @tomk79 <http://twitter.com/tomk79/>
+- website: <https://www.pxt.jp/>
+- Twitter: @tomk79 <https://twitter.com/tomk79/>
