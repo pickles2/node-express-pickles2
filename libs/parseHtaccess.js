@@ -6,6 +6,7 @@ module.exports = function( execute_php, callback ){
 	callback = callback || function(){};
 	var utils79 = require('utils79');
 	var rtn = {};
+	rtn.extensionPattern = '/^(?:html|htm|css|js)$/g'; // 初期値
 
 
 	var htaccess = '';
