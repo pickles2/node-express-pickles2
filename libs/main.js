@@ -145,12 +145,16 @@ module.exports = function(execute_php, options, app){
 
 				params = querystring.parse( (req._parsedUrl.search||'').replace(new RegExp('^\\?'), '') );
 				// console.log(query);
-				if( params['THEME'] ){
-					req.session['THEME'] = params['THEME'];
+				function rememberParams(paramName){
+					if( params[paramName] ){
+						req.session[paramName] = params[paramName];
+					}
+					if( req.session && req.session[paramName] ){
+						params[paramName] = req.session[paramName];
+					}
 				}
-				if( req.session && req.session['THEME'] ){
-					params['THEME'] = req.session['THEME'];
-				}
+				rememberParams('THEME');
+				rememberParams('LANG');
 				req._parsedUrl.search = '?'+querystring.stringify(params);
 				// console.log(req._parsedUrl.search);
 

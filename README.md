@@ -80,6 +80,7 @@ app.use(
 
 ### express-pickles2 2.0.0-beta.3 (リリース日未定)
 
+- パラメータ `LANG` を覚えるようになった。
 - .htaccess を解析して得る拡張子のパターンに初期値 `(?:html|htm|css|js)` を与えた。
 
 ### express-pickles2 2.0.0-beta.2 (2018年3月5日)
