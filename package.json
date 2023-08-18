@@ -20,11 +20,11 @@
     "mocha": "^2.4.5"
   },
   "dependencies": {
-    "body-parser": "^1.15.0",
-    "es6-promise": "^3.2.1",
-    "express-session": "^1.13.0",
-    "mime": "^1.3.4",
-    "px2agent": "^2.0.4",
-    "utils79": "0.0.4"
+    "body-parser": "^1.20.2",
+    "es6-promise": "^3.3.1",
+    "express-session": "^1.17.3",
+    "mime": "^1.6.0",
+    "px2agent": "^2.0.7",
+    "utils79": "^0.0.4"
   }
 }
